@@ -1,0 +1,22 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Esta es mi primera API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lainodHO/API-REST.git"
+  },
+  "author": "Daniel Hernández Olague",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lainodHO/API-REST/issues"
+  },
+  "homepage": "https://github.com/lainodHO/API-REST#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
