@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({
     extended : true,
 }));
 
+routes(app);
 //Iniciar el servidor
 const server=app.listen(port, (error)=> {
     if (error) return console.log('Error: ${error}');
