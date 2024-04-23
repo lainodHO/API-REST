@@ -2,7 +2,7 @@
 const express = require ('express');
 const port=3001;
 // para permitir manejo de POST y PUT
-const bodyParse =require ('body-parse');
+const bodyParser = require('body-parser');
 const routes = require ('./routes/routes');
 const app = express();
 
@@ -16,5 +16,7 @@ routes(app);
 //Iniciar el servidor
 const server=app.listen(port, (error)=> {
     if (error) return console.log('Error: ${error}');
-    console.log('El servidor escucha en el puerto ${server.address().port}');
+    console.log(`El servidor escucha en el puerto ${3001}`);
+
 });
+
