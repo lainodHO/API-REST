@@ -26,7 +26,26 @@
         <label for="fullName">Nombre Completo:</label>
         <input type="text" class="form-control" id="fullName" name="full_name" required>
       </div>
-      <button type="submit" class="btn btn-primary">Add User</button>
+      <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+    </form>
+
+    <hr>
+    <!-- Edit User Form -->
+    <h2>Editar Usuario</h2>
+    <form id="editUserForm">
+      <div class="form-group">
+        <label for="editUserId">ID:</label>
+        <input type="text" class="form-control" id="editUserId" name="id" required readonly>
+      </div>
+      <div class="form-group">
+        <label for="editUserName">Nombre:</label>
+        <input type="text" class="form-control" id="editUserName" name="user_name" required>
+      </div>
+      <div class="form-group">
+        <label for="editFullName">Nombre Completo:</label>
+        <input type="text" class="form-control" id="editFullName" name="full_name" required>
+      </div>
+      <button type="button" class="btn btn-primary" onclick="updateUser()">Guardar</button>
     </form>
 
     <hr>
@@ -54,8 +73,8 @@
               <strong>ID:</strong> ${user.id} - 
               <strong>Username:</strong> ${user.user_name} - 
               <strong>Full Name:</strong> ${user.full_name}
-              <button class="btn btn-warning btn-sm mx-2" onclick="editUser(${user.id})">Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Delete</button>
+              <button class="btn btn-warning btn-sm mx-2" onclick="editUser(${user.id})">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Eliminar</button>
             `;
             userList.appendChild(li);
           });
@@ -92,6 +111,39 @@
         })
         .catch(function (error) {
           console.error('Error deleting user:', error);
+        });
+    }
+
+    // Function to populate edit form with user data
+    function editUser(userId) {
+      // Retrieve user data by ID and populate the edit form fields
+      axios.get(`/users/${userId}`)
+        .then(function(response) {
+          const user = response.data[0]; // Assuming the response is an array with a single user object
+          document.getElementById('editUserId').value = user.id;
+          document.getElementById('editUserName').value = user.user_name;
+          document.getElementById('editFullName').value = user.full_name;
+        })
+        .catch(function(error) {
+          console.error('Error fetching user data:', error);
+        });
+    }
+
+    // Function to update user data
+    function updateUser() {
+      const userId = document.getElementById('editUserId').value;
+      const userData = {
+        user_name: document.getElementById('editUserName').value,
+        full_name: document.getElementById('editFullName').value
+      };
+
+      axios.put(`/users/${userId}`, userData)
+        .then(function(response) {
+          console.log('User updated successfully:', response.data);
+          fetchUsers(); // Refresh the user list after update
+        })
+        .catch(function(error) {
+          console.error('Error updating user:', error);
         });
     }
 
