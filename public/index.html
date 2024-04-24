@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manejador de Usuarios</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Manejador de Usuarios</h1>
+    <hr>
+    <!-- Add User Form -->
+    <h2>Agregar Usuario</h2>
+    <form id="addUserForm">
+      <div class="form-group">
+        <label for="userId">ID:</label>
+        <input type="text" class="form-control" id="userId" name="id" required>
+      </div>
+      <div class="form-group">
+        <label for="userName">Nombre:</label>
+        <input type="text" class="form-control" id="userName" name="user_name" required>
+      </div>
+      <div class="form-group">
+        <label for="fullName">Nombre Completo:</label>
+        <input type="text" class="form-control" id="fullName" name="full_name" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add User</button>
+    </form>
+
+    <hr>
+    <!-- Users List -->
+    <h2>Lista de Usuario</h2>
+    <ul id="userList" class="list-group">
+      <!-- User items will be dynamically added here -->
+    </ul>
+  </div>
+
+  <!-- Bootstrap JS and Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Function to fetch and display users
+    function fetchUsers() {
+      axios.get('/users')
+        .then(function (response) {
+          const users = response.data;
+          const userList = document.getElementById('userList');
+          userList.innerHTML = '';
+          users.forEach(function(user) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.innerHTML = `
+              <strong>ID:</strong> ${user.id} - 
+              <strong>Username:</strong> ${user.user_name} - 
+              <strong>Full Name:</strong> ${user.full_name}
+              <button class="btn btn-warning btn-sm mx-2" onclick="editUser(${user.id})">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">Delete</button>
+            `;
+            userList.appendChild(li);
+          });
+        })
+        .catch(function (error) {
+          console.error('Error fetching users:', error);
+        });
+    }
+
+    // Function to add a new user
+    document.getElementById('addUserForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+      const userData = {};
+      formData.forEach(function(value, key) {
+        userData[key] = value;
+      });
+      axios.post('/users', userData)
+        .then(function (response) {
+          console.log('User added successfully:', response.data);
+          fetchUsers();
+        })
+        .catch(function (error) {
+          console.error('Error adding user:', error);
+        });
+    });
+
+    // Function to delete a user
+    function deleteUser(userId) {
+      axios.delete(`/users/${userId}`)
+        .then(function (response) {
+          console.log('User deleted successfully:', response.data);
+          fetchUsers();
+        })
+        .catch(function (error) {
+          console.error('Error deleting user:', error);
+        });
+    }
+
+    // Initial fetch of users
+    fetchUsers();
+  </script>
+</body>
+</html>

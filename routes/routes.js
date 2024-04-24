@@ -21,31 +21,46 @@ const router = (app) => {
     // Mostrar todos los Usuarios
     app.get('/users', (request, response) => {
         pool.query('SELECT * FROM users', (error, result) => {
-            if (error) throw error;
+            if (error) throw error;{
 
             response.send(result.rows);
+            }
         });
     });
 
-    // Agregar un nuevo usuario
-    app.post('/users', (request, response) => {
-        pool.query('INSERT INTO users SET ?', request.body, (error, result) => {
-            if (error) throw error;
-            
-            response.status(201).send(`User added with ID: ${result.rows[0].id}`);
-        });
+
+// Agregar un nuevo usuario
+app.post('/users', (request, response) => {
+    const userData = request.body;
+    pool.query('INSERT INTO users (id, user_name, full_name) VALUES ($1, $2, $3)', [userData.id, userData.user_name, userData.full_name], (error, result) => {
+        if (error) {
+            console.error('Error al agregar un nuevo usuario:', error);
+            response.status(500).send('Error interno del servidor');
+        } else {
+            console.log('Usuario agregado con éxito');
+            response.status(201).send(`Usuario agregado con ID: ${userData.id}`);
+        }
     });
+});
 
-    // Actualizar un usuario
-    app.put('/users/:id', (request, response) => {
-        const id = request.params.id;
 
-        pool.query('UPDATE users SET $1 WHERE id = $2', [request.body, id], (error, result) => {
-            if (error) throw error;
 
-            response.send("User updated successfully");
-        });
+// Actualizar un usuario
+app.put('/users/:id', (request, response) => {
+    const id = request.params.id;
+    const userData = request.body;
+
+    pool.query('UPDATE users SET user_name = $1, full_name = $2 WHERE id = $3', [userData.user_name, userData.full_name, id], (error, result) => {
+        if (error) {
+            console.error('Error al actualizar el usuario:', error);
+            response.status(500).send('Error interno del servidor');
+        } else {
+            console.log('Usuario actualizado con éxito');
+            response.send("Usuario actualizado correctamente");
+        }
     });
+});
+
 
     // Borrar un Usuario
     app.delete('/users/:id', (request, response) => {
@@ -62,8 +77,3 @@ const router = (app) => {
 // Exportar el Router
 module.exports = router;
 
-
-//id autoincremental 
-//nombre del usuario 
-//nombre completo del humano 
-//database api
