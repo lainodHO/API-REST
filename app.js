@@ -28,5 +28,5 @@ routes(app); // Importa las rutas y las configura en la aplicación Express
 // Iniciar el servidor en el puerto 3002
 const server = app.listen(3001, (error) => {
   if (error) return console.log(`Error: ${error}`);
-  console.log('Server running at http://192.168.137.1:3001/');
+  console.log('Server running at http://192.168.1.106:3001/');
 });
