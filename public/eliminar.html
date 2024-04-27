@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manejador de Usuarios</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- SweetAlert CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/index.html">Manejador de Usuarios</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/insetar.html">Insertar <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/editar.html">Editar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/eliminar.html">Eliminar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/Jorge.html">Error</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1>Manejador de Usuarios</h1>
+
+    <div class="container mt-5">
+      <h2>Lista de Usuarios</h2>
+      <input type="text" id="searchInput" class="form-control mb-3" placeholder="Buscar usuario...">
+      <ul id="userList" class="list-group">
+        <li class="list-group-item">Usuario 1</li>
+        <li class="list-group-item">Usuario 2</li>
+        <li class="list-group-item">Usuario 3</li>
+        <!-- Agrega más elementos de la lista según sea necesario -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    // Function to fetch and display users
+    function fetchUsers() {
+      axios.get('/users')
+        .then(function (response) {
+          const users = response.data;
+          const userList = document.getElementById('userList');
+          userList.innerHTML = '';
+          users.forEach(function(user) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            li.innerHTML = `
+              <strong>ID:</strong> ${user.id} - 
+              <strong>Nombre:</strong> ${user.nombre} - 
+              <strong>Contraseña:</strong> ********  -
+              <button class="btn btn-danger btn-sm" onclick="confirmDeleteUser(${user.id})">Eliminar</button>
+            `;
+            userList.appendChild(li);
+          });
+        })
+        .catch(function (error) {
+          console.error('Error fetching users:', error);
+        });
+    }
+
+ 
+    // Function to delete a user
+    function deleteUser(userId) {
+      axios.delete(`/users/${userId}`)
+        .then(function (response) {
+          console.log('User deleted successfully:', response.data);
+          fetchUsers();
+        })
+        .catch(function (error) {
+          console.error('Error deleting user:', error);
+        });
+    }
+
+    // Function to confirm delete user action with SweetAlert
+    function confirmDeleteUser(userId) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminarlo!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deleteUser(userId);
+        }
+      });
+    }
+    // Initial fetch of users
+    fetchUsers();
+  </script>
+  
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("searchInput");
+    const userList = document.getElementById("userList").getElementsByTagName("li");
+  
+    searchInput.addEventListener("input", function() {
+      const searchTerm = this.value.toLowerCase();
+  
+      Array.from(userList).forEach(function(user) {
+        const userName = user.textContent.toLowerCase();
+        if (userName.includes(searchTerm)) {
+          user.style.display = "block";
+        } else {
+          user.style.display = "none";
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
